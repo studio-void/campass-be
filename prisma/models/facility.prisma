@@ -3,6 +3,7 @@ model Facility {
   name        String
   school      String
   description String?
+  imageUrl    String?
   location    String
   isAvailable Boolean           @default(true)
   openTime    DateTime

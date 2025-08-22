@@ -19,6 +19,7 @@ model User {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   wikis              Wiki[]
+  notes              Note[]
   wikiHistories      WikiHistory[]
   facilityRequests   FacilityRequest[]
   checkRequests      CheckRequest[]
