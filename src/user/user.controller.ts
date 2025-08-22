@@ -16,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from '../auth/roles/roles.decorator';
 import { RolesGuard } from '../auth/roles/roles.guard';
+import { VerifyUserDto } from './dto/verify-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -94,7 +95,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post('verify')
   async verify(@UserId() userId: number, @Body() verifyDto: VerifyUserDto) {
-    // TODO: verify
     return await this.userService.verify(userId, verifyDto);
   }
 
@@ -103,7 +103,6 @@ export class UserController {
   @Roles('admin')
   @Post('verify/approve/:id')
   async approve(@Param('id') id: number) {
-    // TODO: approve verify
     return await this.userService.approve(id);
   }
 
@@ -112,7 +111,6 @@ export class UserController {
   @Roles('admin')
   @Post('verify/reject/:id')
   async reject(@Param('id') id: number) {
-    // TODO: reject verify
     return await this.userService.reject(id);
   }
 }
