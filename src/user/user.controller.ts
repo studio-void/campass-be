@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -87,5 +88,23 @@ export class UserController {
   @Get('admin')
   adminDemo() {
     return { message: '관리자 권한이 확인되었습니다.' };
+  }
+
+  @Post('verify')
+  async verify(@UserId() userId: number, @Body() verifyDto: VerifyUserDto) {
+    // TODO: verify
+    return await this.userService.verify(userId, verifyDto);
+  }
+
+  @Post('verify/approve/:id')
+  async approve(@Param('id') id: number) {
+    // TODO: approve verify
+    return await this.userService.approve(id);
+  }
+
+  @Post('verify/reject/:id')
+  async reject(@Param('id') id: number) {
+    // TODO: reject verify
+    return await this.userService.reject(id);
   }
 }
