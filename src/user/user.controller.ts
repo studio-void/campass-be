@@ -90,18 +90,26 @@ export class UserController {
     return { message: '관리자 권한이 확인되었습니다.' };
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
   @Post('verify')
   async verify(@UserId() userId: number, @Body() verifyDto: VerifyUserDto) {
     // TODO: verify
     return await this.userService.verify(userId, verifyDto);
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post('verify/approve/:id')
   async approve(@Param('id') id: number) {
     // TODO: approve verify
     return await this.userService.approve(id);
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post('verify/reject/:id')
   async reject(@Param('id') id: number) {
     // TODO: reject verify
