@@ -12,3 +12,163 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum CheckRequestType {
+  SINGLE_EXIT
+  DOUBLE_EXIT
+  MAINTENANCE
+}
+
+enum CheckRequestStatus {
+  PASS
+  FIRST_CHECK
+  SECOND_CHECK
+  THIRD_CHECK
+  FAIL
+}
+
+model CheckRequest {
+  id        Int                @id @default(autoincrement())
+  user      User               @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  dorm      String
+  notes     String?
+  type      CheckRequestType
+  status    CheckRequestStatus @default(FIRST_CHECK)
+  checkAt   DateTime
+
+  @@index([userId, checkAt])
+  @@index([dorm, checkAt])
+}
+
+model StorageRequest {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  storage   String
+  items     String
+  isStored  Boolean  @default(false)
+  storeAt   DateTime
+
+  @@index([userId, storeAt])
+  @@index([storage, storeAt])
+}
+
+model Facility {
+  id          Int               @id @default(autoincrement())
+  name        String
+  school      String
+  description String?
+  imageUrl    String?
+  location    String
+  isAvailable Boolean           @default(true)
+  openTime    DateTime
+  closeTime   DateTime
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  requests    FacilityRequest[]
+}
+
+model FacilityRequest {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  facilityId Int
+  startTime  DateTime
+  endTime    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([facilityId, startTime, endTime])
+}
+
+model Equipment {
+  id          Int                @id @default(autoincrement())
+  name        String
+  school      String
+  description String?
+  imageUrl    String?
+  isAvailable Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  histories   EquipmentHistory[]
+}
+
+model EquipmentHistory {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  equipmentId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum VerifyStatus {
+  NONE
+  PENDING
+  VERIFIED
+}
+
+model User {
+  id                 Int                @id @default(autoincrement())
+  email              String             @unique
+  password           String
+  name               String
+  nickname           String
+  tel                String
+  school             String
+  number             String?            @unique
+  isAdmin            Boolean            @default(false)
+  verifyStatus       VerifyStatus       @default(NONE)
+  verifyImageUrl     String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  wikis              Wiki[]
+  notes              Note[]
+  wikiHistories      WikiHistory[]
+  facilityRequests   FacilityRequest[]
+  checkRequests      CheckRequest[]
+  storageRequests    StorageRequest[]
+  equipmentHistories EquipmentHistory[]
+}
+
+model Wiki {
+  id        Int           @id @default(autoincrement())
+  title     String
+  content   String
+  author    User          @relation(fields: [authorId], references: [id])
+  authorId  Int
+  school    String
+  histories WikiHistory[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model WikiHistory {
+  id       Int      @id @default(autoincrement())
+  wiki     Wiki     @relation(fields: [wikiId], references: [id])
+  wikiId   Int
+  editor   User     @relation(fields: [editorId], references: [id])
+  editorId Int
+  content  String
+  editedAt DateTime @default(now())
+  comment  String?
+}
