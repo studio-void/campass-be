@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import userConfig from './user.config';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { ConfigType } from '@nestjs/config';
 import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
