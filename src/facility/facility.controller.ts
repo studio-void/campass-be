@@ -12,6 +12,9 @@ import { FacilityService } from './facility.service';
 import { UserId } from '../user/user.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { CreateFacilityDto } from './dto/create-facility.dto';
+import { UpdateFacilityDto } from './dto/update-facility.dto';
+import { UseFacilityDto } from './dto/use-facility.dto';
 
 @Controller('facility')
 export class FacilityController {

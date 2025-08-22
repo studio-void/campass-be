@@ -14,6 +14,10 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
+import { CreateCheckDto } from './dto/create-check.dto';
+import { UpdateCheckDto } from './dto/update-check.dto';
+import { CreateStorageDto } from './dto/create-storage.dto';
+import { UpdateStorageDto } from './dto/update-storage.dto';
 
 @Controller('dorm')
 export class DormController {
