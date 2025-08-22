@@ -1,0 +1,27 @@
+model Facility {
+  id          Int               @id @default(autoincrement())
+  name        String
+  school      String
+  description String?
+  location    String
+  isAvailable Boolean           @default(true)
+  openTime    DateTime
+  closeTime   DateTime
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  requests    FacilityRequest[]
+}
+
+model FacilityRequest {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  facilityId Int
+  startTime  DateTime
+  endTime    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([facilityId, startTime, endTime])
+}

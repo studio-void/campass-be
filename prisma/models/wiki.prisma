@@ -1,0 +1,22 @@
+model Wiki {
+  id        Int           @id @default(autoincrement())
+  title     String
+  content   String
+  author    User          @relation(fields: [authorId], references: [id])
+  authorId  Int
+  school    String
+  histories WikiHistory[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model WikiHistory {
+  id       Int      @id @default(autoincrement())
+  wiki     Wiki     @relation(fields: [wikiId], references: [id])
+  wikiId   Int
+  editor   User     @relation(fields: [editorId], references: [id])
+  editorId Int
+  content  String
+  editedAt DateTime @default(now())
+  comment  String?
+}
