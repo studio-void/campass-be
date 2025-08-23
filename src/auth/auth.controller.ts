@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -42,6 +43,25 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: '비밀번호가 틀렸음' })
   @ApiResponse({ status: 404, description: '사용자를 찾을 수 없음' })
+  @ApiBody({
+    type: LoginDto,
+    examples: {
+      gist_admin: {
+        summary: 'GIST 관리자 계정',
+        value: {
+          email: 'admin@gist.ac.kr',
+          password: 'admin1234',
+        },
+      },
+      gist_student: {
+        summary: 'GIST 학생 계정',
+        value: {
+          email: 'park.student@gist.ac.kr',
+          password: 'user1234',
+        },
+      },
+    },
+  })
   @HttpCode(200)
   @Post('login')
   login(@Body() loginData: LoginDto) {

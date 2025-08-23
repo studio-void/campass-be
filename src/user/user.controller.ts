@@ -110,6 +110,54 @@ export class UserController {
   }
 
   @ApiOperation({
+    summary: '사용자 인증 요청 목록 조회 (관리자)',
+    description:
+      '모든 사용자의 인증 요청을 조회합니다. 관리자만 접근할 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증 요청 목록 조회 성공',
+    schema: {
+      example: [
+        {
+          id: 4,
+          email: 'student3@gist.ac.kr',
+          name: '박학생',
+          nickname: '박박',
+          school: 'GIST',
+          number: '20241003',
+          isAdmin: false,
+          verifyStatus: 'PENDING',
+          verifyImageUrl: 'https://example.com/verify-images/student3-card.jpg',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+        {
+          id: 6,
+          email: 'student4@gist.ac.kr',
+          name: '정대학원',
+          nickname: '정정',
+          school: 'GIST',
+          number: '20241005',
+          isAdmin: false,
+          verifyStatus: 'PENDING',
+          verifyImageUrl: 'https://example.com/verify-images/student4-card.jpg',
+          createdAt: '2024-01-02T00:00:00.000Z',
+          updatedAt: '2024-01-02T00:00:00.000Z',
+        },
+      ],
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get('verify')
+  async readAllVerifyRequests() {
+    return await this.userService.readAllVerifyRequests();
+  }
+
+  @ApiOperation({
     summary: '사용자 정보 조회',
     description:
       'ID로 특정 사용자의 정보를 조회합니다. 관리자는 전화번호 포함 모든 정보를, 일반 사용자는 기본 정보만 볼 수 있습니다.',
@@ -242,54 +290,6 @@ export class UserController {
   @Delete()
   async delete(@UserId() userId: number) {
     return await this.userService.delete(userId);
-  }
-
-  @ApiOperation({
-    summary: '사용자 인증 요청 목록 조회 (관리자)',
-    description:
-      '모든 사용자의 인증 요청을 조회합니다. 관리자만 접근할 수 있습니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '인증 요청 목록 조회 성공',
-    schema: {
-      example: [
-        {
-          id: 4,
-          email: 'student3@gist.ac.kr',
-          name: '박학생',
-          nickname: '박박',
-          school: 'GIST',
-          number: '20241003',
-          isAdmin: false,
-          verifyStatus: 'PENDING',
-          verifyImageUrl: 'https://example.com/verify-images/student3-card.jpg',
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-01-01T00:00:00.000Z',
-        },
-        {
-          id: 6,
-          email: 'student4@gist.ac.kr',
-          name: '정대학원',
-          nickname: '정정',
-          school: 'GIST',
-          number: '20241005',
-          isAdmin: false,
-          verifyStatus: 'PENDING',
-          verifyImageUrl: 'https://example.com/verify-images/student4-card.jpg',
-          createdAt: '2024-01-02T00:00:00.000Z',
-          updatedAt: '2024-01-02T00:00:00.000Z',
-        },
-      ],
-    },
-  })
-  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
-  @ApiBearerAuth('jwt')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  @Get('verify')
-  async readAllVerifyRequests() {
-    return await this.userService.readAllVerifyRequests();
   }
 
   @ApiOperation({
