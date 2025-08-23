@@ -143,6 +143,15 @@ export class WikiService {
     if (wiki.authorId !== userId)
       throw new ForbiddenException('Only author can delete');
 
-    return await this.prisma.wiki.delete({ where: { id } });
+    // Transaction을 사용하여 WikiHistory를 먼저 삭제하고 Wiki를 삭제
+    return await this.prisma.$transaction(async (prisma) => {
+      // 먼저 연관된 WikiHistory 모두 삭제
+      await prisma.wikiHistory.deleteMany({
+        where: { wikiId: id },
+      });
+
+      // 그 다음 Wiki 삭제
+      return await prisma.wiki.delete({ where: { id } });
+    });
   }
 }
