@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { VerifyStatus } from '@prisma/client';
 import {
   IsEmail,
   IsEnum,
@@ -11,12 +12,6 @@ import {
   IsOptional,
   IsUrl,
 } from 'class-validator';
-
-export enum VerifyStatus {
-  NONE = 'NONE',
-  PENDING = 'PENDING',
-  VERIFIED = 'VERIFIED',
-}
 
 export class CreateUserDto {
   @ApiProperty({
@@ -101,7 +96,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: 'NONE',
-    enum: ['NONE', 'PENDING', 'VERIFIED'],
+    enum: VerifyStatus,
     description: 'Verification status',
     required: false,
     default: 'NONE',

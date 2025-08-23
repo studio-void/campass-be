@@ -31,7 +31,7 @@ async function main() {
       number: '2024002',
       password: userPassword,
       isAdmin: false,
-      verifyStatus: 'VERIFIED' as const,
+      verifyStatus: 'NONE' as const,
     },
     {
       email: 'user2@example.com',
@@ -42,7 +42,7 @@ async function main() {
       number: '2024003',
       password: userPassword,
       isAdmin: false,
-      verifyStatus: 'PENDING' as const,
+      verifyStatus: 'NONE' as const,
     },
   ];
 

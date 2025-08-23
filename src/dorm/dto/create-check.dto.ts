@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CheckRequestType } from '@prisma/client';
 import {
   IsNotEmpty,
   IsString,
@@ -27,11 +28,11 @@ export class CreateCheckDto {
 
   @ApiProperty({
     description: '점검 유형',
-    enum: ['SINGLE_EXIT', 'DOUBLE_EXIT', 'MAINTENANCE'],
+    enum: CheckRequestType,
     example: 'SINGLE_EXIT',
   })
-  @IsEnum(['SINGLE_EXIT', 'DOUBLE_EXIT', 'MAINTENANCE'])
-  type: 'SINGLE_EXIT' | 'DOUBLE_EXIT' | 'MAINTENANCE';
+  @IsEnum(CheckRequestType)
+  type: CheckRequestType;
 
   @ApiProperty({
     description: '점검 예정 시간',

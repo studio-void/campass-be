@@ -27,8 +27,15 @@ export class UserService {
     return {
       id: true,
       email: true,
+      password: true,
       name: true,
+      nickname: true,
+      tel: true,
+      school: true,
+      number: true,
       isAdmin: true,
+      verifyStatus: true,
+      verifyImageUrl: true,
       createdAt: true,
       updatedAt: true,
     };
@@ -40,7 +47,12 @@ export class UserService {
       id: true,
       email: true,
       name: true,
+      nickname: true,
+      school: true,
+      number: true,
       isAdmin: true,
+      verifyStatus: true,
+      verifyImageUrl: true,
       createdAt: true,
       updatedAt: true,
     };
@@ -143,6 +155,18 @@ export class UserService {
         verifyStatus: 'PENDING',
       },
       select: this.getBasicUserSelect(),
+    });
+  }
+
+  async readAllVerifyRequests() {
+    return await this.prisma.user.findMany({
+      where: {
+        verifyStatus: 'PENDING',
+      },
+      select: this.getBasicUserSelect(),
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
   }
 

@@ -1,15 +1,15 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsOptional, IsEnum } from 'class-validator';
+import { IsEnum } from 'class-validator';
 import { CreateCheckDto } from './create-check.dto';
+import { CheckRequestStatus } from '@prisma/client';
 
 export class UpdateCheckDto extends PartialType(CreateCheckDto) {
   @ApiProperty({
     description: '점검 상태',
-    enum: ['PASS', 'FIRST_CHECK', 'SECOND_CHECK', 'THIRD_CHECK', 'FAIL'],
+    enum: CheckRequestStatus,
     example: 'PASS',
-    required: false,
+    required: true,
   })
-  @IsEnum(['PASS', 'FIRST_CHECK', 'SECOND_CHECK', 'THIRD_CHECK', 'FAIL'])
-  @IsOptional()
-  status?: 'PASS' | 'FIRST_CHECK' | 'SECOND_CHECK' | 'THIRD_CHECK' | 'FAIL';
+  @IsEnum(CheckRequestStatus)
+  status: CheckRequestStatus;
 }

@@ -42,8 +42,21 @@ export class ResearchController {
           school: '한국대학교',
           description: '연구용 고성능 현미경',
           isAvailable: true,
+          isOccupied: false,
           createdAt: '2024-01-01T00:00:00.000Z',
           updatedAt: '2024-01-01T00:00:00.000Z',
+          histories: [
+            {
+              id: 1,
+              userId: 2,
+              createdAt: '2024-01-10T09:00:00.000Z',
+              updatedAt: '2024-01-10T11:30:00.000Z',
+              user: {
+                name: '김연구',
+                nickname: 'researcher1',
+              },
+            },
+          ],
         },
       ],
     },
@@ -69,8 +82,21 @@ export class ResearchController {
         school: '한국대학교',
         description: '연구용 고성능 현미경',
         isAvailable: true,
+        isOccupied: false,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        histories: [
+          {
+            id: 1,
+            userId: 2,
+            createdAt: '2024-01-10T09:00:00.000Z',
+            updatedAt: '2024-01-10T11:30:00.000Z',
+            user: {
+              name: '김연구',
+              nickname: 'researcher1',
+            },
+          },
+        ],
       },
     },
   })
@@ -80,6 +106,74 @@ export class ResearchController {
   @Get('equipment/:id')
   async readEquipmentById(@UserId() userId: number, @Param('id') id: number) {
     return await this.researchService.readEquipmentById(userId, id);
+  }
+
+  @ApiOperation({
+    summary: '장비 사용 기록 및 통계 조회',
+    description:
+      '특정 장비의 모든 사용 기록과 통계 정보를 조회합니다. 총 사용 시간, 현재 사용자 등의 정보를 포함합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '장비 사용 기록 및 통계 조회 성공',
+    schema: {
+      example: {
+        equipment: {
+          id: 1,
+          name: '현미경',
+          school: '한국대학교',
+          description: '연구용 고성능 현미경',
+          isAvailable: true,
+          isOccupied: false,
+        },
+        histories: [
+          {
+            id: 1,
+            userId: 2,
+            equipmentId: 1,
+            createdAt: '2024-01-15T09:00:00.000Z',
+            updatedAt: '2024-01-15T11:30:00.000Z',
+            user: {
+              id: 2,
+              name: '김연구',
+              nickname: 'researcher1',
+            },
+          },
+          {
+            id: 2,
+            userId: 3,
+            equipmentId: 1,
+            createdAt: '2024-01-14T14:00:00.000Z',
+            updatedAt: '2024-01-14T16:00:00.000Z',
+            user: {
+              id: 3,
+              name: '박실험',
+              nickname: 'experiment2',
+            },
+          },
+        ],
+        statistics: {
+          totalUsages: 2,
+          completedUsages: 2,
+          totalUsageMinutes: 270,
+          totalUsageHours: 4,
+          isCurrentlyInUse: false,
+          currentUser: null,
+          isCurrentUserUsing: false,
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: '장비를 찾을 수 없음' })
+  @ApiResponse({ status: 403, description: '접근 권한 없음 (다른 학교 장비)' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('equipment/history/:id')
+  async readEquipmentHistory(
+    @UserId() userId: number,
+    @Param('id') id: number,
+  ) {
+    return await this.researchService.readEquipmentHistory(userId, id);
   }
 
   @ApiOperation({
@@ -96,6 +190,7 @@ export class ResearchController {
         school: '한국대학교',
         description: '화학 성분 분석을 위한 장비',
         isAvailable: true,
+        isOccupied: false,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -115,6 +210,29 @@ export class ResearchController {
     );
   }
 
+  @ApiOperation({
+    summary: '연구 장비 수정 (관리자)',
+    description: '연구 장비 정보를 수정합니다. 관리자만 수정할 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '장비 수정 성공',
+    schema: {
+      example: {
+        id: 1,
+        name: '고성능 현미경',
+        school: '한국대학교',
+        description: '연구용 고성능 현미경 (업그레이드됨)',
+        isAvailable: true,
+        isOccupied: false,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-15T10:00:00.000Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
+  @ApiResponse({ status: 404, description: '장비를 찾을 수 없음' })
+  @ApiResponse({ status: 405, description: 'Role Guard - Method Not Allowed' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard)
   @Patch('equipment/:id')
@@ -130,6 +248,26 @@ export class ResearchController {
     );
   }
 
+  @ApiOperation({
+    summary: '연구 장비 삭제 (관리자)',
+    description: '연구 장비를 삭제합니다. 관리자만 삭제할 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '장비 삭제 성공',
+    schema: {
+      example: {
+        message: '연구 장비가 성공적으로 삭제되었습니다.',
+        deletedEquipment: {
+          id: 1,
+          name: '현미경',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
+  @ApiResponse({ status: 404, description: '장비를 찾을 수 없음' })
+  @ApiResponse({ status: 405, description: 'Role Guard - Method Not Allowed' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard)
   @Delete('equipment/:id')
@@ -140,21 +278,26 @@ export class ResearchController {
   @ApiOperation({
     summary: '장비 사용 시작',
     description:
-      '연구 장비 사용을 시작합니다. 현재 사용 중이 아닌 장비만 사용할 수 있습니다.',
+      '연구 장비 사용을 시작합니다. 현재 사용 중이 아닌 장비만 사용할 수 있습니다. 사용 시작 시 장비의 isOccupied가 true로 변경됩니다.',
   })
   @ApiResponse({
     status: 200,
-    description: '장비 사용 시작 성공',
+    description: '장비 사용 시작 성공 (장비 상태가 사용 중으로 변경됨)',
     schema: {
       example: {
         id: 1,
         equipmentId: 1,
         userId: 2,
-        startTime: '2024-01-15T09:00:00.000Z',
-        endTime: null,
-        purpose: '연구용',
         createdAt: '2024-01-15T09:00:00.000Z',
         updatedAt: '2024-01-15T09:00:00.000Z',
+        equipment: {
+          name: '현미경',
+          isOccupied: true,
+        },
+        user: {
+          name: '김연구',
+          nickname: 'researcher1',
+        },
       },
     },
   })
@@ -171,11 +314,33 @@ export class ResearchController {
 
   @ApiOperation({
     summary: '장비 사용 종료',
-    description: '연구 장비 사용을 종료합니다.',
+    description:
+      '연구 장비 사용을 종료합니다. 사용 종료 시 장비의 isOccupied가 false로 변경됩니다.',
   })
   @ApiResponse({
     status: 200,
-    description: '장비 사용 종료 성공',
+    description: '장비 사용 종료 성공 (장비 상태가 사용 가능으로 변경됨)',
+    schema: {
+      example: {
+        id: 1,
+        equipmentId: 1,
+        userId: 2,
+        createdAt: '2024-01-15T09:00:00.000Z',
+        updatedAt: '2024-01-15T11:30:00.000Z',
+        equipment: {
+          name: '현미경',
+          isOccupied: false,
+        },
+        user: {
+          name: '김연구',
+          nickname: 'researcher1',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: '현재 사용 중이 아니거나 사용 권한 없음',
   })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard)

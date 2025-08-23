@@ -136,15 +136,7 @@ export class DormController {
     description: '검사 요청 수정 성공',
     schema: {
       example: {
-        id: 1,
-        userId: 2,
-        dorm: 'A동 101호',
-        notes: '퇴사 검사 - 승인됨',
-        type: 'DOUBLE_EXIT',
         status: 'PASS',
-        checkAt: '2024-01-20T10:00:00.000Z',
-        createdAt: '2024-01-01T00:00:00.000Z',
-        updatedAt: '2024-01-02T00:00:00.000Z',
       },
     },
   })

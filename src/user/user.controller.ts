@@ -124,18 +124,49 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: '관리자 테스트 데모',
-    description: 'admin 권한이 있어야 접근 가능한 데모 API입니다.',
+    summary: '사용자 인증 요청 목록 조회 (관리자)',
+    description:
+      '모든 사용자의 인증 요청을 조회합니다. 관리자만 접근할 수 있습니다.',
   })
-  @ApiResponse({ status: 200, description: '관리자 권한 확인 성공' })
-  @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
-  @ApiResponse({ status: 403, description: '권한 없음(admin 아님)' })
+  @ApiResponse({
+    status: 200,
+    description: '인증 요청 목록 조회 성공',
+    schema: {
+      example: [
+        {
+          id: 3,
+          email: 'user2@example.com',
+          name: '이학생',
+          nickname: 'student2',
+          school: '한국대학교',
+          number: '2024003',
+          verifyStatus: 'PENDING',
+          verifyImageUrl: 'https://example.com/verify-images/student-card.jpg',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+        {
+          id: 4,
+          email: 'user3@example.com',
+          name: '박학생',
+          nickname: 'student3',
+          school: '한국대학교',
+          number: '2024004',
+          verifyStatus: 'PENDING',
+          verifyImageUrl: 'https://example.com/verify-images/student-card2.jpg',
+          createdAt: '2024-01-02T00:00:00.000Z',
+          updatedAt: '2024-01-02T00:00:00.000Z',
+        },
+      ],
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @Get('admin')
-  adminDemo() {
-    return { message: '관리자 권한이 확인되었습니다.' };
+  @Get('verify')
+  async readAllVerifyRequests() {
+    return await this.userService.readAllVerifyRequests();
   }
 
   @ApiOperation({
@@ -181,6 +212,7 @@ export class UserController {
     },
   })
   @ApiResponse({ status: 403, description: '관리자 권한 필요' })
+  @ApiResponse({ status: 405, description: 'Role Guard - Method Not Allowed' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
@@ -208,6 +240,7 @@ export class UserController {
     },
   })
   @ApiResponse({ status: 403, description: '관리자 권한 필요' })
+  @ApiResponse({ status: 405, description: 'Role Guard - Method Not Allowed' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
