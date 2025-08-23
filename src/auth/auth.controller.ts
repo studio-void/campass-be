@@ -8,9 +8,15 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt/jwt.guard';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -19,7 +25,21 @@ export class AuthController {
     summary: '로그인',
     description: '사용자 인증 후 JWT 토큰을 반환합니다.',
   })
-  @ApiResponse({ status: 200, description: '로그인 성공, JWT 토큰 반환' })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 성공, JWT 토큰 반환',
+    schema: {
+      example: {
+        access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        user: {
+          id: 2,
+          email: 'user@example.com',
+          name: '김학생',
+          isAdmin: false,
+        },
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: '비밀번호가 틀렸음' })
   @ApiResponse({ status: 404, description: '사용자를 찾을 수 없음' })
   @HttpCode(200)

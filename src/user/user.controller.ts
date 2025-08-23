@@ -9,7 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { UserId } from './user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +23,7 @@ import { Roles } from '../auth/roles/roles.decorator';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { VerifyUserDto } from './dto/verify-user.dto';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -26,8 +32,25 @@ export class UserController {
     summary: '현재 사용자 정보 조회',
     description: '인증된 사용자의 정보를 반환합니다.',
   })
-  @ApiBearerAuth('jwt')
-  @ApiResponse({ status: 200, description: '사용자 정보 반환' })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 반환',
+    schema: {
+      example: {
+        id: 2,
+        email: 'user@example.com',
+        name: '김학생',
+        nickname: 'student1',
+        tel: '010-2345-6789',
+        school: '한국대학교',
+        number: '2024002',
+        isAdmin: false,
+        verifyStatus: 'VERIFIED',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
   @ApiResponse({ status: 404, description: '해당 ID의 사용자를 찾을 수 없음' })
   @ApiBearerAuth('jwt')
@@ -41,7 +64,25 @@ export class UserController {
     summary: '회원가입',
     description: '새로운 사용자를 생성합니다.',
   })
-  @ApiResponse({ status: 201, description: '사용자 생성 성공' })
+  @ApiResponse({
+    status: 201,
+    description: '사용자 생성 성공',
+    schema: {
+      example: {
+        id: 4,
+        email: 'newstudent@example.com',
+        name: '박학생',
+        nickname: 'newstudent',
+        tel: '010-9876-5432',
+        school: '한국대학교',
+        number: '2024004',
+        isAdmin: false,
+        verifyStatus: 'NONE',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
   @ApiResponse({ status: 409, description: '이미 존재하는 이메일' })
   @Post()
   async create(@Body() user: CreateUserDto) {
@@ -52,7 +93,10 @@ export class UserController {
     summary: '사용자 정보 수정',
     description: '현재 사용자의 정보를 수정합니다.',
   })
-  @ApiResponse({ status: 200, description: '사용자 정보 수정 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 수정 성공',
+  })
   @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
   @ApiResponse({ status: 404, description: '해당 ID의 사용자를 찾을 수 없음' })
   @ApiBearerAuth('jwt')
@@ -66,7 +110,10 @@ export class UserController {
     summary: '회원 탈퇴',
     description: '현재 사용자를 삭제합니다.',
   })
-  @ApiResponse({ status: 200, description: '사용자 삭제 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 삭제 성공',
+  })
   @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
   @ApiResponse({ status: 404, description: '해당 ID의 사용자를 찾을 수 없음' })
   @ApiBearerAuth('jwt')
@@ -91,6 +138,24 @@ export class UserController {
     return { message: '관리자 권한이 확인되었습니다.' };
   }
 
+  @ApiOperation({
+    summary: '사용자 인증 요청',
+    description: '학생증 이미지를 업로드하여 사용자 인증을 요청합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증 요청 성공 (관리자 승인 대기)',
+    schema: {
+      example: {
+        id: 3,
+        email: 'user2@example.com',
+        name: '이학생',
+        verifyStatus: 'PENDING',
+        verifyImageUrl: 'https://example.com/verify-images/student-card.jpg',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard)
   @Post('verify')
@@ -98,6 +163,24 @@ export class UserController {
     return await this.userService.verify(userId, verifyDto);
   }
 
+  @ApiOperation({
+    summary: '사용자 인증 승인 (관리자)',
+    description: '관리자가 사용자의 인증 요청을 승인합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증 승인 성공',
+    schema: {
+      example: {
+        id: 3,
+        email: 'user2@example.com',
+        name: '이학생',
+        verifyStatus: 'VERIFIED',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
@@ -106,6 +189,25 @@ export class UserController {
     return await this.userService.approve(id);
   }
 
+  @ApiOperation({
+    summary: '사용자 인증 거부 (관리자)',
+    description: '관리자가 사용자의 인증 요청을 거부합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증 거부 성공',
+    schema: {
+      example: {
+        id: 3,
+        email: 'user2@example.com',
+        name: '이학생',
+        verifyStatus: 'NONE',
+        verifyImageUrl: null,
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: '관리자 권한 필요' })
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')

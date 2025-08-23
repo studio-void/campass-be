@@ -20,7 +20,7 @@ export enum VerifyStatus {
 
 export class CreateUserDto {
   @ApiProperty({
-    example: 'user@example.com',
+    example: 'newstudent@example.com',
     description: 'User email address (must be unique)',
     type: String,
   })
@@ -29,7 +29,7 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    example: 'password123',
+    example: 'user1234',
     minLength: 8,
     maxLength: 32,
     description: 'User password (8~32 characters)',
@@ -41,7 +41,7 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty({
-    example: 'John Doe',
+    example: '박학생',
     description: 'User real name',
     type: String,
   })
@@ -50,7 +50,7 @@ export class CreateUserDto {
   name: string;
 
   @ApiProperty({
-    example: 'nickname',
+    example: 'newstudent',
     description: 'User nickname (display name)',
     type: String,
   })
@@ -59,7 +59,7 @@ export class CreateUserDto {
   nickname: string;
 
   @ApiProperty({
-    example: '010-1234-5678',
+    example: '010-9876-5432',
     description: 'Phone number',
     type: String,
   })
@@ -68,7 +68,7 @@ export class CreateUserDto {
   tel: string;
 
   @ApiProperty({
-    example: 'GIST',
+    example: '한국대학교',
     description: 'School name (any school is supported)',
     type: String,
   })
@@ -77,7 +77,7 @@ export class CreateUserDto {
   school: string;
 
   @ApiProperty({
-    example: '20231234',
+    example: '2024004',
     description: 'Student number (ID, 8~10 digits, must be unique)',
     type: String,
     required: false,
