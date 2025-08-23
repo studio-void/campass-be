@@ -25,7 +25,7 @@ export class DormService {
     return await this.prisma.checkRequest.findMany({
       include: {
         user: {
-          select: UserService.getBasicUserSelect(),
+          select: UserService.getAdminUserSelect(),
         },
       },
       orderBy: { checkAt: 'asc' },
