@@ -14,7 +14,7 @@ async function main() {
   const usersData: CreateUserDto[] = [
     {
       email: 'admin@gist.ac.kr',
-      name: '관리자',
+      name: 'Admin',
       nickname: 'admin',
       tel: '010-1234-5678',
       school: 'GIST',
@@ -25,9 +25,9 @@ async function main() {
     },
     // VERIFIED 사용자들
     {
-      email: 'kim.student@gist.ac.kr',
-      name: '김학생',
-      nickname: 'student1',
+      email: 'john.doe@gm.gist.ac.kr',
+      name: 'John Doe',
+      nickname: 'Doe',
       tel: '010-2345-6789',
       school: 'GIST',
       number: '2024002',
@@ -36,9 +36,9 @@ async function main() {
       verifyStatus: 'VERIFIED' as const,
     },
     {
-      email: 'lee.student@gist.ac.kr',
-      name: '이연구',
-      nickname: 'researcher1',
+      email: 'john.appleseed@gm.gist.ac.kr',
+      name: 'John Appleseed',
+      nickname: 'Seed',
       tel: '010-3456-7890',
       school: 'GIST',
       number: '2024003',
@@ -48,8 +48,8 @@ async function main() {
     },
     // PENDING 사용자들
     {
-      email: 'park.student@gist.ac.kr',
-      name: '박학생',
+      email: 'cindy@gm.gist.ac.kr',
+      name: 'Cindy',
       nickname: 'student2',
       tel: '010-4567-8901',
       school: 'GIST',
@@ -59,21 +59,21 @@ async function main() {
       verifyStatus: 'PENDING' as const,
     },
     {
-      email: 'choi.student@gist.ac.kr',
-      name: '최실험',
+      email: 'kiara@gm.gist.ac.kr',
+      name: 'Kiara Choi',
       nickname: 'experiment1',
       tel: '010-5678-9012',
       school: 'GIST',
       number: '2024005',
       password: userPassword,
-      isAdmin: false,
+      isAdmin: true,
       verifyStatus: 'PENDING' as const,
     },
     // NONE 사용자들
     {
-      email: 'jung.student@gist.ac.kr',
-      name: '정신입',
-      nickname: 'newbie1',
+      email: 'upstage@gist.ac.kr',
+      name: 'Kim Upstage',
+      nickname: 'upstage',
       tel: '010-6789-0123',
       school: 'GIST',
       number: '2024006',
@@ -82,14 +82,14 @@ async function main() {
       verifyStatus: 'NONE' as const,
     },
     {
-      email: 'han.student@gist.ac.kr',
-      name: '한프로젝트',
+      email: 'jyles@gist.ac.kr',
+      name: 'Jyles Hwang',
       nickname: 'project1',
       tel: '010-7890-1234',
       school: 'GIST',
       number: '2024007',
       password: userPassword,
-      isAdmin: false,
+      isAdmin: true,
       verifyStatus: 'NONE' as const,
     },
   ];
@@ -107,46 +107,46 @@ async function main() {
   // Facilities data
   const facilitiesData = [
     {
-      name: 'GIST 체육관',
+      name: 'GIST Gym',
       school: 'GIST',
-      description: '농구, 배드민턴, 배구 등을 할 수 있는 종합 체육관입니다.',
-      location: '학생회관 B1층',
+      description: 'Gym for sports activities and fitness training.',
+      location: 'Student Union Building 2F',
       openTime: new Date('2024-01-01T08:00:00Z'),
       closeTime: new Date('2024-01-01T22:00:00Z'),
       isAvailable: true,
     },
     {
-      name: '대회의실',
+      name: 'GIST Conference Room',
       school: 'GIST',
-      description: '대형 세미나 및 학술회의를 위한 공간입니다.',
-      location: '오룡관 3층',
+      description: 'Space for large seminars and academic conferences.',
+      location: 'Oryong Hall 3F',
       openTime: new Date('2024-01-01T09:00:00Z'),
       closeTime: new Date('2024-01-01T21:00:00Z'),
       isAvailable: true,
     },
     {
-      name: '소회의실 A',
+      name: 'Conference Room A',
       school: 'GIST',
-      description: '팀 프로젝트 및 소규모 미팅을 위한 공간입니다.',
-      location: '도서관 4층',
+      description: 'Space for team projects and small meetings.',
+      location: 'Central Library 4F',
       openTime: new Date('2024-01-01T08:00:00Z'),
       closeTime: new Date('2024-01-01T20:00:00Z'),
       isAvailable: true,
     },
     {
-      name: '소회의실 B',
+      name: 'Conference Room B',
       school: 'GIST',
-      description: '스터디룸으로 활용 가능한 소규모 회의실입니다.',
-      location: '도서관 4층',
+      description: 'Space for team projects and small meetings.',
+      location: 'Central Library 4F',
       openTime: new Date('2024-01-01T08:00:00Z'),
       closeTime: new Date('2024-01-01T20:00:00Z'),
       isAvailable: false,
     },
     {
-      name: '메이커 스페이스',
+      name: 'Maker Space',
       school: 'GIST',
-      description: '3D 프린팅 및 프로토타입 제작을 위한 공간입니다.',
-      location: '창업보육센터 1층',
+      description: 'Space for 3D printing and maker education.',
+      location: 'Start-up Center 1F',
       openTime: new Date('2024-01-01T09:00:00Z'),
       closeTime: new Date('2024-01-01T18:00:00Z'),
       isAvailable: true,
@@ -202,43 +202,46 @@ async function main() {
   // Equipment data
   const equipmentData = [
     {
-      name: '고해상도 현미경',
+      name: 'High-Resolution Microscope',
       school: 'GIST',
-      description: '생물학 연구용 고해상도 광학 현미경',
+      description:
+        'High-resolution optical microscope for biological research.',
       isAvailable: true,
       isOccupied: false,
     },
     {
-      name: '3D 프린터 (Ultimaker)',
+      name: '3D Printer (Ultimaker)',
       school: 'GIST',
-      description: 'PLA, ABS 소재 지원 프로토타입 제작용 3D 프린터',
+      description:
+        '3D printer supporting PLA and ABS materials for prototyping.',
       isAvailable: true,
       isOccupied: true,
     },
     {
-      name: 'PCR 장비',
+      name: 'PCR Machine',
       school: 'GIST',
-      description: 'DNA 증폭을 위한 PCR (중합효소연쇄반응) 장비',
+      description:
+        'DNA amplification PCR (Polymerase Chain Reaction) equipment.',
       isAvailable: true,
       isOccupied: false,
     },
     {
-      name: '분광분석기',
+      name: 'Spectrophotometer',
       school: 'GIST',
-      description: 'UV-Vis 분광분석기 (화학 성분 분석용)',
+      description: 'UV-Vis spectrophotometer for chemical analysis.',
       isAvailable: false,
     },
     {
-      name: '원심분리기',
+      name: 'Centrifuge',
       school: 'GIST',
-      description: '고속 원심분리기 (최대 15000 rpm)',
+      description: 'High-speed centrifuge (up to 15000 rpm)',
       isAvailable: true,
       isOccupied: false,
     },
     {
-      name: '오실로스코프',
+      name: 'Oscilloscope',
       school: 'GIST',
-      description: '전자공학 실험용 디지털 오실로스코프',
+      description: 'Digital oscilloscope for electronics experiments.',
       isAvailable: true,
       isOccupied: false,
     },
@@ -302,40 +305,38 @@ async function main() {
   const checkRequestsData = [
     {
       userId: users[1].id, // 김학생 (VERIFIED)
-      dorm: 'GIST A동 101호',
-      notes: '에어컨 작동 불량으로 인한 점검 요청',
+      dorm: 'GIST A101',
+      notes: 'Maintenance request due to air conditioner malfunction',
       type: 'MAINTENANCE' as const,
       status: 'FIRST_CHECK' as const,
       checkAt: new Date('2024-01-20T10:00:00Z'),
     },
     {
       userId: users[2].id, // 이연구 (VERIFIED)
-      dorm: 'GIST B동 205호',
-      notes: '학회 참석으로 인한 1박 2일 외박',
+      dorm: 'GIST B205',
       type: 'SINGLE_EXIT' as const,
       status: 'PASS' as const,
       checkAt: new Date('2024-01-18T15:00:00Z'),
     },
     {
       userId: users[3].id, // 박학생 (PENDING)
-      dorm: 'GIST A동 303호',
-      notes: '화장실 배수구 막힘',
+      dorm: 'GIST A303',
+      notes: 'Restroom maintenance request',
       type: 'MAINTENANCE' as const,
       status: 'SECOND_CHECK' as const,
       checkAt: new Date('2024-01-22T14:00:00Z'),
     },
     {
       userId: users[4].id, // 최학부 (VERIFIED)
-      dorm: 'GIST C동 150호',
-      notes: '가족 방문으로 인한 3박 4일 외박',
+      dorm: 'GIST C150',
       type: 'DOUBLE_EXIT' as const,
       status: 'PASS' as const,
       checkAt: new Date('2024-01-15T09:00:00Z'),
     },
     {
       userId: users[5].id, // 정대학원 (PENDING)
-      dorm: 'GIST B동 108호',
-      notes: '조명 교체 요청',
+      dorm: 'GIST B108',
+      notes: 'LED Change Request',
       type: 'MAINTENANCE' as const,
       status: 'FIRST_CHECK' as const,
       checkAt: new Date('2024-01-25T11:00:00Z'),
@@ -354,15 +355,15 @@ async function main() {
   const storageRequestsData = [
     {
       userId: users[1].id, // user1
-      storage: '지하 보관창고',
-      items: '겨울 이불, 코트',
+      storage: 'B1F Storage',
+      items: 'Winter blanket, coat',
       isStored: false,
       storeAt: new Date('2024-01-25T14:00:00Z'),
     },
     {
       userId: users[2].id, // user2
-      storage: '개인 사물함',
-      items: '책, 노트',
+      storage: 'Building B, 4F',
+      items: 'Books, notes',
       isStored: true,
       storeAt: new Date('2024-01-10T11:00:00Z'),
     },
@@ -379,38 +380,66 @@ async function main() {
   // Wikis data
   const wikisData = [
     {
-      title: 'GIST 기숙사 생활 가이드',
-      content:
-        'GIST 기숙사에서 생활할 때 알아야 할 기본적인 정보들을 정리한 위키입니다. 입실 규칙, 외박 신청 방법, 공용 시설 이용 안내 등을 포함합니다.',
+      title: 'About GIST Library',
+      content: `## Library Operating Hours
+
+| Division      | Operating Hours     | Extended Hours During Exam Period |
+|---------------|---------------------|-----------------------------------|
+| LG Library    | 09:00 ~ 21:00       | -                                 |
+| Central Library | 08:00 ~ 24:00     | 08:00 ~ 02:00 (next day)          |
+
+- **Extended Hours**: From one week before the exam period until Thursday of the exam week  
+- **Closed Days**: New Year’s Day, Lunar New Year holidays, Chuseok holidays  
+
+---
+
+## LG Library
+- LG Library is a **stack-centered facility** where users can borrow and return materials.  
+- A **Family Reading Room** is available to support early childhood and children’s education.  
+
+---
+
+## Central Library
+- The Central Library offers **high-quality IT infrastructure**, including a desktop virtualization system and cloud system, as well as learning and relaxation spaces.  
+- Users can utilize **Thin Client PCs** for searching and multimedia.  
+- The library provides **44 diverse rooms** such as a small theater, exhibition room, individual reading rooms, and group study rooms for learning, discussion, and presentations.  
+  - Rooms can be reserved via:  
+    - **PC**: [https://library.gist.ac.kr](https://library.gist.ac.kr)  
+    - **Mobile**: [https://library.gist.ac.kr/m-index.html](https://library.gist.ac.kr/m-index.html)  
+- To maintain a quiet atmosphere, **general reading rooms** and **laptop reading rooms** are operated separately.  `,
       authorId: users[0].id, // 관리자
       school: 'GIST',
     },
     {
-      title: 'GIST 식당 메뉴 및 운영시간',
-      content:
-        'GIST 내 식당들의 메뉴와 운영시간을 정리한 정보입니다. 학생식당, 교직원식당, 카페테리아별 정보를 확인하세요.',
+      title: 'About GIST Cafeteria',
+      content: `We have organized information about GIST restaurants here.
+## Student Union Building II (제2학생회관)
+- Student Cafeteria
+- Breakfast: 8:00 AM – 9:00 AM
+- Lunch: 11:30 AM – 1:30 PM
+- Dinner: 5:00 PM – 6:30 PM
+- Only this cafeteria operates on weekends.
+- Price:
+ - Breakfast: ₩1,000 (₩5,300 for non-students, student ID required)
+ - Lunch: ₩5,500 (buffet or set meal)
+ - Dinner: ₩5,500 (self-serve)
+## Student Union Café (inside Student Cafeteria)
+- Weekdays: 8:30 AM – 6:30 PM
+- Closed during lunch break: 1:30 PM – 2:00 PM
+- Closed on weekends and public holidays
+
+## Student Union Building I (제1학생회관)
+- Student Cafeteria
+ - Breakfast: 8:00 AM – 9:00 AM (Weekdays only)
+ - Lunch: 11:30 AM – 1:30 PM (Weekdays only)
+ - Dinner: 5:00 PM – 6:30 PM (Weekdays only)
+- Lunch is served buffet-style
+- Same breakfast price as Student Union Building II
+- “RakRak” Dining Hall
+- Student Dining Hall: 10:00 AM – 7:00 PM
+- Faculty Dining Hall (Self-service): 11:30 AM – 1:00 PM
+- Closed on weekends and public holidays`,
       authorId: users[1].id, // 김학생
-      school: 'GIST',
-    },
-    {
-      title: '연구실 장비 사용법',
-      content:
-        '각 연구실별 공통 장비 사용법과 예약 시스템 이용 방법을 안내합니다. 현미경, PCR 장비, 3D 프린터 등의 사용법을 확인하세요.',
-      authorId: users[2].id, // 이연구
-      school: 'GIST',
-    },
-    {
-      title: 'GIST 도서관 이용 안내',
-      content:
-        '중앙도서관, 전자정보관 이용 시간과 스터디룸 예약 방법, 도서 대출 규정 등을 안내합니다.',
-      authorId: users[3].id, // 박학생
-      school: 'GIST',
-    },
-    {
-      title: '캠퍼스 셔틀버스 시간표',
-      content:
-        'GIST 캠퍼스와 광주시내를 연결하는 셔틀버스 시간표와 정류장 위치를 안내합니다.',
-      authorId: users[4].id, // 최학부
       school: 'GIST',
     },
   ];
@@ -426,29 +455,7 @@ async function main() {
   }
 
   // Wiki History data
-  const wikiHistoryData = [
-    {
-      wikiId: wikis[0].id, // GIST 기숙사 생활 가이드
-      editorId: users[1].id, // 김학생
-      content:
-        'GIST 기숙사에서 생활할 때 알아야 할 기본적인 정보들을 정리한 위키입니다. 입실 규칙, 외박 신청 방법, 공용 시설 이용 안내, 세탁실 이용법 등을 포함합니다. (세탁실 정보 추가)',
-      comment: '세탁실 이용 안내 추가',
-    },
-    {
-      wikiId: wikis[1].id, // GIST 식당 메뉴 및 운영시간
-      editorId: users[2].id, // 이연구
-      content:
-        'GIST 내 식당들의 메뉴와 운영시간을 정리한 정보입니다. 학생식당, 교직원식당, 카페테리아별 정보 및 최신 주간 메뉴를 확인하세요.',
-      comment: '주간 메뉴 업데이트',
-    },
-    {
-      wikiId: wikis[2].id, // 연구실 장비 사용법
-      editorId: users[3].id, // 박학생
-      content:
-        '각 연구실별 공통 장비 사용법과 예약 시스템 이용 방법을 안내합니다. 현미경, PCR 장비, 3D 프린터, 원심분리기 등의 사용법을 확인하세요.',
-      comment: '원심분리기 사용법 추가',
-    },
-  ];
+  const wikiHistoryData = [];
 
   console.log('📝 Creating wiki history...');
   for (const historyData of wikiHistoryData) {
