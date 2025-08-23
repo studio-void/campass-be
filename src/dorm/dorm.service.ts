@@ -113,7 +113,7 @@ export class DormService {
     return await this.prisma.storageRequest.findMany({
       include: {
         user: {
-          select: { name: true, nickname: true, email: true },
+          select: UserService.getAdminUserSelect(),
         },
       },
       orderBy: { storeAt: 'asc' },
@@ -132,7 +132,7 @@ export class DormService {
       where: { id },
       include: {
         user: {
-          select: { name: true, nickname: true, email: true },
+          select: UserService.getAdminUserSelect(),
         },
       },
     });
