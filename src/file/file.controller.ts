@@ -48,11 +48,6 @@ export class FileController {
           format: 'binary',
           description: '업로드할 파일',
         },
-        prefix: {
-          type: 'string',
-          description: '파일 저장 경로 prefix (선택사항)',
-          example: 'profiles',
-        },
       },
       required: ['file'],
     },
