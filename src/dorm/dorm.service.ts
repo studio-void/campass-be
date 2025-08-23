@@ -8,6 +8,7 @@ import { CreateCheckDto } from './dto/create-check.dto';
 import { UpdateCheckDto } from './dto/update-check.dto';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class DormService {
@@ -24,7 +25,7 @@ export class DormService {
     return await this.prisma.checkRequest.findMany({
       include: {
         user: {
-          select: { name: true, nickname: true, email: true },
+          select: UserService.getBasicUserSelect(),
         },
       },
       orderBy: { checkAt: 'asc' },
@@ -43,7 +44,7 @@ export class DormService {
       where: { id },
       include: {
         user: {
-          select: { name: true, nickname: true, email: true },
+          select: UserService.getBasicUserSelect(),
         },
       },
     });

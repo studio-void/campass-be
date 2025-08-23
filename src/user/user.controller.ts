@@ -38,14 +38,15 @@ export class UserController {
     schema: {
       example: {
         id: 2,
-        email: 'user@example.com',
+        email: 'student1@gist.ac.kr',
         name: '김학생',
-        nickname: 'student1',
+        nickname: '김김',
         tel: '010-2345-6789',
-        school: '한국대학교',
-        number: '2024002',
+        school: 'GIST',
+        number: '20241001',
         isAdmin: false,
         verifyStatus: 'VERIFIED',
+        verifyImageUrl: 'https://example.com/verify-images/student1-card.jpg',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -61,6 +62,125 @@ export class UserController {
   }
 
   @ApiOperation({
+    summary: '모든 사용자 목록 조회',
+    description:
+      '모든 사용자 목록을 조회합니다. 관리자는 전화번호 포함 모든 정보를, 일반 사용자는 기본 정보만 볼 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 목록 조회 성공',
+    schema: {
+      example: [
+        {
+          id: 1,
+          email: 'admin@gist.ac.kr',
+          name: '관리자',
+          nickname: '관리',
+          tel: '010-1234-5678', // 관리자만 볼 수 있는 정보
+          school: 'GIST',
+          number: '20241000',
+          isAdmin: true,
+          verifyStatus: 'VERIFIED',
+          verifyImageUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+        {
+          id: 2,
+          email: 'student1@gist.ac.kr',
+          name: '김학생',
+          nickname: '김김',
+          school: 'GIST',
+          number: '20241001',
+          isAdmin: false,
+          verifyStatus: 'VERIFIED',
+          verifyImageUrl: 'https://example.com/verify-images/student1-card.jpg',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+    },
+  })
+  @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('all')
+  async readAllUsers(@UserId() userId: number) {
+    return await this.userService.readAllUsers(userId);
+  }
+
+  @ApiOperation({
+    summary: '사용자 정보 조회',
+    description:
+      'ID로 특정 사용자의 정보를 조회합니다. 관리자는 전화번호 포함 모든 정보를, 일반 사용자는 기본 정보만 볼 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 조회 성공',
+    schema: {
+      example: {
+        id: 3,
+        email: 'student2@gist.ac.kr',
+        name: '이연구',
+        nickname: '이이',
+        tel: '010-3456-7890', // 관리자만 볼 수 있는 정보
+        school: 'GIST',
+        number: '20241002',
+        isAdmin: false,
+        verifyStatus: 'VERIFIED',
+        verifyImageUrl: 'https://example.com/verify-images/student2-card.jpg',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
+  @ApiResponse({ status: 404, description: '해당 ID의 사용자를 찾을 수 없음' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async readById(@UserId() userId: number, @Param('id') id: number) {
+    return await this.userService.readByIdWithAuth(id, userId);
+  }
+
+  @ApiOperation({
+    summary: '이메일로 사용자 정보 조회',
+    description:
+      '이메일로 사용자의 정보를 조회합니다. 관리자는 전화번호 포함 모든 정보를, 일반 사용자는 기본 정보만 볼 수 있습니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 조회 성공',
+    schema: {
+      example: {
+        id: 3,
+        email: 'student2@gist.ac.kr',
+        name: '이연구',
+        nickname: '이이',
+        tel: '010-3456-7890', // 관리자만 볼 수 있는 정보
+        school: 'GIST',
+        number: '20241002',
+        isAdmin: false,
+        verifyStatus: 'VERIFIED',
+        verifyImageUrl: 'https://example.com/verify-images/student2-card.jpg',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: '인증 실패(JWT 누락 또는 만료)' })
+  @ApiResponse({
+    status: 404,
+    description: '해당 이메일의 사용자를 찾을 수 없음',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('email/:email')
+  async readByEmail(@UserId() userId: number, @Param('email') email: string) {
+    return await this.userService.readByEmailWithAuth(email, userId);
+  }
+
+  @ApiOperation({
     summary: '회원가입',
     description: '새로운 사용자를 생성합니다.',
   })
@@ -70,14 +190,15 @@ export class UserController {
     schema: {
       example: {
         id: 4,
-        email: 'newstudent@example.com',
+        email: 'newstudent@gist.ac.kr',
         name: '박학생',
-        nickname: 'newstudent',
+        nickname: '박박',
         tel: '010-9876-5432',
-        school: '한국대학교',
-        number: '2024004',
+        school: 'GIST',
+        number: '20241003',
         isAdmin: false,
         verifyStatus: 'NONE',
+        verifyImageUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -134,26 +255,28 @@ export class UserController {
     schema: {
       example: [
         {
-          id: 3,
-          email: 'user2@example.com',
-          name: '이학생',
-          nickname: 'student2',
-          school: '한국대학교',
-          number: '2024003',
+          id: 4,
+          email: 'student3@gist.ac.kr',
+          name: '박학생',
+          nickname: '박박',
+          school: 'GIST',
+          number: '20241003',
+          isAdmin: false,
           verifyStatus: 'PENDING',
-          verifyImageUrl: 'https://example.com/verify-images/student-card.jpg',
+          verifyImageUrl: 'https://example.com/verify-images/student3-card.jpg',
           createdAt: '2024-01-01T00:00:00.000Z',
           updatedAt: '2024-01-01T00:00:00.000Z',
         },
         {
-          id: 4,
-          email: 'user3@example.com',
-          name: '박학생',
-          nickname: 'student3',
-          school: '한국대학교',
-          number: '2024004',
+          id: 6,
+          email: 'student4@gist.ac.kr',
+          name: '정대학원',
+          nickname: '정정',
+          school: 'GIST',
+          number: '20241005',
+          isAdmin: false,
           verifyStatus: 'PENDING',
-          verifyImageUrl: 'https://example.com/verify-images/student-card2.jpg',
+          verifyImageUrl: 'https://example.com/verify-images/student4-card.jpg',
           createdAt: '2024-01-02T00:00:00.000Z',
           updatedAt: '2024-01-02T00:00:00.000Z',
         },
@@ -179,10 +302,15 @@ export class UserController {
     schema: {
       example: {
         id: 3,
-        email: 'user2@example.com',
-        name: '이학생',
+        email: 'student2@gist.ac.kr',
+        name: '이연구',
+        nickname: '이이',
+        school: 'GIST',
+        number: '20241002',
+        isAdmin: false,
         verifyStatus: 'PENDING',
-        verifyImageUrl: 'https://example.com/verify-images/student-card.jpg',
+        verifyImageUrl: 'https://example.com/verify-images/student2-card.jpg',
+        createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
     },
@@ -204,9 +332,15 @@ export class UserController {
     schema: {
       example: {
         id: 3,
-        email: 'user2@example.com',
-        name: '이학생',
+        email: 'student2@gist.ac.kr',
+        name: '이연구',
+        nickname: '이이',
+        school: 'GIST',
+        number: '20241002',
+        isAdmin: false,
         verifyStatus: 'VERIFIED',
+        verifyImageUrl: 'https://example.com/verify-images/student2-card.jpg',
+        createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
     },
@@ -231,10 +365,15 @@ export class UserController {
     schema: {
       example: {
         id: 3,
-        email: 'user2@example.com',
-        name: '이학생',
+        email: 'student2@gist.ac.kr',
+        name: '이연구',
+        nickname: '이이',
+        school: 'GIST',
+        number: '20241002',
+        isAdmin: false,
         verifyStatus: 'NONE',
         verifyImageUrl: null,
+        createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
     },

@@ -23,7 +23,7 @@ export class UserService {
   ) {}
 
   // 민감한 정보를 포함한 필드 선택 (관리자용)
-  private getAdminUserSelect(): UserSelect {
+  static getAdminUserSelect(): UserSelect {
     return {
       id: true,
       email: true,
@@ -42,7 +42,7 @@ export class UserService {
   }
 
   // 민감한 정보를 제외한 기본 필드 선택 (일반 사용자용)
-  private getBasicUserSelect(): UserSelect {
+  static getBasicUserSelect(): UserSelect {
     return {
       id: true,
       email: true,
@@ -52,10 +52,15 @@ export class UserService {
       number: true,
       isAdmin: true,
       verifyStatus: true,
-      verifyImageUrl: true,
       createdAt: true,
       updatedAt: true,
     };
+  }
+
+  // 관리자 여부에 따라 적절한 select 반환
+  static getUserSelect(isAdmin: boolean): UserSelect {
+    if (isAdmin) return UserService.getAdminUserSelect();
+    else return UserService.getBasicUserSelect();
   }
 
   async create(user: CreateUserDto) {
@@ -79,14 +84,54 @@ export class UserService {
 
   async read() {
     return await this.prisma.user.findMany({
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
+    });
+  }
+
+  async readAllUsers(requesterId: number) {
+    // 요청자가 관리자인지 확인
+    const requester = await this.prisma.user.findUnique({
+      where: { id: requesterId },
+      select: { isAdmin: true },
+    });
+
+    if (!requester) {
+      throw new NotFoundException(`User with ID ${requesterId} not found`);
+    }
+
+    return await this.prisma.user.findMany({
+      select: UserService.getUserSelect(requester.isAdmin),
+      orderBy: { createdAt: 'desc' },
     });
   }
 
   async readById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
+  }
+
+  async readByIdWithAuth(id: number, requesterId: number) {
+    // 요청자가 관리자인지 확인
+    const requester = await this.prisma.user.findUnique({
+      where: { id: requesterId },
+      select: { isAdmin: true },
+    });
+
+    if (!requester) {
+      throw new NotFoundException(`Requester with ID ${requesterId} not found`);
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: UserService.getUserSelect(requester.isAdmin),
     });
 
     if (!user) {
@@ -99,6 +144,29 @@ export class UserService {
   async readByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    return user;
+  }
+
+  async readByEmailWithAuth(email: string, requesterId: number) {
+    // 요청자가 관리자인지 확인
+    const requester = await this.prisma.user.findUnique({
+      where: { id: requesterId },
+      select: { isAdmin: true },
+    });
+
+    if (!requester) {
+      throw new NotFoundException(`Requester with ID ${requesterId} not found`);
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: UserService.getUserSelect(requester.isAdmin),
     });
 
     if (!user) {
@@ -128,7 +196,7 @@ export class UserService {
     return await this.prisma.user.update({
       where: { id },
       data,
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
     });
   }
 
@@ -143,7 +211,7 @@ export class UserService {
 
     return await this.prisma.user.delete({
       where: { id },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
     });
   }
 
@@ -154,7 +222,7 @@ export class UserService {
         verifyImageUrl: verifyDto.verifyImageUrl,
         verifyStatus: 'PENDING',
       },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
     });
   }
 
@@ -163,7 +231,7 @@ export class UserService {
       where: {
         verifyStatus: 'PENDING',
       },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
       orderBy: {
         updatedAt: 'desc',
       },
@@ -176,7 +244,7 @@ export class UserService {
       data: {
         verifyStatus: 'VERIFIED',
       },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
     });
   }
 
@@ -187,7 +255,7 @@ export class UserService {
         verifyStatus: 'NONE',
         verifyImageUrl: null,
       },
-      select: this.getBasicUserSelect(),
+      select: UserService.getBasicUserSelect(),
     });
   }
 }
