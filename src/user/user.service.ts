@@ -5,12 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import userConfig from './user.config';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigType } from '@nestjs/config';
-import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@prisma/client';
+import { VerifyUserDto } from './dto/verify-user.dto';
 
 export type UserSelect = Partial<Record<keyof User, true>>;
 
@@ -26,8 +27,15 @@ export class UserService {
     return {
       id: true,
       email: true,
+      password: true,
       name: true,
+      nickname: true,
+      tel: true,
+      school: true,
+      number: true,
       isAdmin: true,
+      verifyStatus: true,
+      verifyImageUrl: true,
       createdAt: true,
       updatedAt: true,
     };
@@ -39,7 +47,12 @@ export class UserService {
       id: true,
       email: true,
       name: true,
+      nickname: true,
+      school: true,
+      number: true,
       isAdmin: true,
+      verifyStatus: true,
+      verifyImageUrl: true,
       createdAt: true,
       updatedAt: true,
     };
@@ -130,6 +143,50 @@ export class UserService {
 
     return await this.prisma.user.delete({
       where: { id },
+      select: this.getBasicUserSelect(),
+    });
+  }
+
+  async verify(userId: number, verifyDto: VerifyUserDto) {
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        verifyImageUrl: verifyDto.verifyImageUrl,
+        verifyStatus: 'PENDING',
+      },
+      select: this.getBasicUserSelect(),
+    });
+  }
+
+  async readAllVerifyRequests() {
+    return await this.prisma.user.findMany({
+      where: {
+        verifyStatus: 'PENDING',
+      },
+      select: this.getBasicUserSelect(),
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+  }
+
+  async approve(id: number) {
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        verifyStatus: 'VERIFIED',
+      },
+      select: this.getBasicUserSelect(),
+    });
+  }
+
+  async reject(id: number) {
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        verifyStatus: 'NONE',
+        verifyImageUrl: null,
+      },
       select: this.getBasicUserSelect(),
     });
   }

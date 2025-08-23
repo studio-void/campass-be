@@ -38,15 +38,17 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Template API')
-    .setDescription('Template API documentation')
+    .setTitle('Campus Management API')
     .setVersion('1.0')
+    .addServer('http://localhost:3000', 'Development Server')
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
         name: 'Authorization',
+        description:
+          'JWT 토큰을 입력하세요. /auth/login에서 토큰을 받을 수 있습니다.',
         in: 'header',
       },
       'jwt',

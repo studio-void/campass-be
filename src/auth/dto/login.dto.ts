@@ -8,12 +8,21 @@ import {
 } from 'class-validator';
 
 export class LoginDto {
-  @ApiProperty({ example: 'user@example.com' })
+  @ApiProperty({
+    example: 'user@example.com',
+    description:
+      'User email (try: admin@example.com, user@example.com, user2@example.com)',
+  })
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'password123', minLength: 8, maxLength: 32 })
+  @ApiProperty({
+    example: 'user1234',
+    minLength: 8,
+    maxLength: 32,
+    description: 'Password (admin: admin1234, users: user1234)',
+  })
   @IsString()
   @MinLength(8)
   @MaxLength(32)
