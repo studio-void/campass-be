@@ -40,7 +40,6 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Campus Management API')
     .setVersion('1.0')
-    .addServer('http://localhost:3000', 'Development Server')
     .addBearerAuth(
       {
         type: 'http',
