@@ -400,7 +400,7 @@ export class UserService {
       where: {
         verifyStatus: 'PENDING',
       },
-      select: UserService.getBasicUserSelect(),
+      select: UserService.getAdminUserSelect(),
       orderBy: {
         updatedAt: 'desc',
       },
