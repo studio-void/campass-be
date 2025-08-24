@@ -77,9 +77,10 @@ export class FileController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|gif|pdf|doc|docx)$/,
-          }),
+          // new FileTypeValidator({
+          //   fileType:
+          //     /^image\/(jpg|jpeg|png|gif)$|^application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)$/,
+          // }),
           new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
         ],
       }),
@@ -147,7 +148,7 @@ export class FileController {
     @UploadedFiles(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
+          new FileTypeValidator({ fileType: /^image\/(jpg|jpeg|png|gif)$/ }),
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
         ],
       }),
