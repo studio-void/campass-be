@@ -129,27 +129,48 @@ enum VerifyStatus {
 }
 
 model User {
-  id                 Int                @id @default(autoincrement())
-  email              String             @unique
-  password           String
-  name               String
-  nickname           String
-  tel                String
-  school             String
-  number             String?            @unique
-  isAdmin            Boolean            @default(false)
-  verifyStatus       VerifyStatus       @default(NONE)
-  verifyImageUrl     String?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  wikis              Wiki[]
-  notes              Note[]
-  wikiHistories      WikiHistory[]
-  facilityRequests   FacilityRequest[]
-  checkRequests      CheckRequest[]
-  storageRequests    StorageRequest[]
-  equipmentHistories EquipmentHistory[]
-  timetable          ScheduleBlock[]
+  id                     Int                @id @default(autoincrement())
+  email                  String             @unique
+  password               String
+  name                   String
+  nickname               String
+  tel                    String
+  school                 String
+  number                 String?            @unique
+  isAdmin                Boolean            @default(false)
+  verifyStatus           VerifyStatus       @default(NONE)
+  verifyImageUrl         String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  wikis                  Wiki[]
+  notes                  Note[]
+  wikiHistories          WikiHistory[]
+  facilityRequests       FacilityRequest[]
+  checkRequests          CheckRequest[]
+  storageRequests        StorageRequest[]
+  equipmentHistories     EquipmentHistory[]
+  timetable              ScheduleBlock[]
+  friends                User[]             @relation("UserFriends")
+  friendOf               User[]             @relation("UserFriends")
+  friendRequestsSent     FriendRequest[]    @relation("FriendRequestsSent")
+  friendRequestsReceived FriendRequest[]    @relation("FriendRequestsReceived")
+}
+
+model FriendRequest {
+  id        Int                 @id @default(autoincrement())
+  from      User                @relation("FriendRequestsSent", fields: [fromId], references: [id])
+  fromId    Int
+  to        User                @relation("FriendRequestsReceived", fields: [toId], references: [id])
+  toId      Int
+  status    FriendRequestStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 model ScheduleBlock {

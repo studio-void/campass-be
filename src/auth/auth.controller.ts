@@ -56,7 +56,7 @@ export class AuthController {
       gist_student: {
         summary: 'GIST 학생 계정',
         value: {
-          email: 'park.student@gist.ac.kr',
+          email: 'john.doe@gm.gist.ac.kr',
           password: 'user1234',
         },
       },

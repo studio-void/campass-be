@@ -92,6 +92,28 @@ async function main() {
       isAdmin: true,
       verifyStatus: 'NONE' as const,
     },
+    {
+      email: 'hoony6134@gm.gist.ac.kr',
+      name: 'JeongHoon Lim',
+      nickname: 'Cyan',
+      tel: '010-4255-6134',
+      school: 'GIST',
+      number: '20255182',
+      password: userPassword,
+      isAdmin: false,
+      verifyStatus: 'NONE' as const,
+    },
+    {
+      email: 'rhseungg@gm.gist.ac.kr',
+      name: 'Hyunseung Ryu',
+      nickname: 'Rhseung',
+      tel: '010-4663-3354',
+      school: 'GIST',
+      number: '20255070',
+      password: userPassword,
+      isAdmin: false,
+      verifyStatus: 'NONE' as const,
+    },
   ];
 
   console.log('👤 Creating users...');

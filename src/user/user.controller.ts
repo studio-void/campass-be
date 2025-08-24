@@ -29,6 +29,95 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
+    summary: '친구 요청 보내기',
+    description: '특정 사용자에게 친구 요청을 보냅니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Post('friend/request/:toId')
+  async sendFriendRequest(
+    @UserId() userId: number,
+    @Param('toId') toId: number,
+  ) {
+    return await this.userService.sendFriendRequest(userId, toId);
+  }
+
+  @ApiOperation({
+    summary: '친구 요청 수락',
+    description: '받은 친구 요청을 수락합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Post('friend/accept/:requestId')
+  async acceptFriendRequest(
+    @UserId() userId: number,
+    @Param('requestId') requestId: number,
+  ) {
+    return await this.userService.acceptFriendRequest(requestId, userId);
+  }
+
+  @ApiOperation({
+    summary: '친구 요청 거절',
+    description: '받은 친구 요청을 거절합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Post('friend/reject/:requestId')
+  async rejectFriendRequest(
+    @UserId() userId: number,
+    @Param('requestId') requestId: number,
+  ) {
+    return await this.userService.rejectFriendRequest(requestId, userId);
+  }
+
+  @ApiOperation({
+    summary: '친구 삭제',
+    description: '친구 관계를 삭제합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Delete('friend/:friendId')
+  async removeFriend(
+    @UserId() userId: number,
+    @Param('friendId') friendId: number,
+  ) {
+    return await this.userService.removeFriend(userId, friendId);
+  }
+
+  @ApiOperation({
+    summary: '친구 목록 조회',
+    description: '현재 사용자의 친구 목록을 조회합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('friend')
+  async getFriends(@UserId() userId: number) {
+    return await this.userService.getFriends(userId);
+  }
+
+  @ApiOperation({
+    summary: '받은 친구 요청 목록',
+    description: '현재 사용자가 받은 친구 요청 목록을 조회합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('friend/requests/received')
+  async getReceivedFriendRequests(@UserId() userId: number) {
+    return await this.userService.getReceivedFriendRequests(userId);
+  }
+
+  @ApiOperation({
+    summary: '보낸 친구 요청 목록',
+    description: '현재 사용자가 보낸 친구 요청 목록을 조회합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('friend/requests/sent')
+  async getSentFriendRequests(@UserId() userId: number) {
+    return await this.userService.getSentFriendRequests(userId);
+  }
+
+  @ApiOperation({
     summary: '현재 사용자 정보 조회',
     description: '인증된 사용자의 정보를 반환합니다.',
   })

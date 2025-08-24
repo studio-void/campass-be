@@ -63,6 +63,113 @@ export class UserService {
     else return UserService.getBasicUserSelect();
   }
 
+  // 친구 요청 보내기
+  async sendFriendRequest(fromId: number, toId: number) {
+    if (fromId === toId)
+      throw new ConflictException('Cannot send request to yourself');
+    const toUser = await this.prisma.user.findUnique({ where: { id: toId } });
+    if (!toUser) throw new NotFoundException('Target user not found');
+    const existing = await this.prisma.friendRequest.findFirst({
+      where: {
+        fromId,
+        toId,
+        status: { in: ['PENDING', 'ACCEPTED'] },
+      },
+    });
+    if (existing)
+      throw new ConflictException('Request already exists or already friends');
+    return await this.prisma.friendRequest.create({
+      data: { fromId, toId, status: 'PENDING' },
+    });
+  }
+
+  // 친구 요청 수락
+  async acceptFriendRequest(requestId: number, userId: number) {
+    const request = await this.prisma.friendRequest.findUnique({
+      where: { id: requestId },
+    });
+    if (!request) throw new NotFoundException('Request not found');
+    if (request.toId !== userId)
+      throw new ConflictException('Not your request');
+    if (request.status !== 'PENDING')
+      throw new ConflictException('Request is not pending');
+    // 친구 관계 추가
+    await this.prisma.user.update({
+      where: { id: request.fromId },
+      data: { friends: { connect: [{ id: request.toId }] } },
+    });
+    await this.prisma.user.update({
+      where: { id: request.toId },
+      data: { friends: { connect: [{ id: request.fromId }] } },
+    });
+    return await this.prisma.friendRequest.update({
+      where: { id: requestId },
+      data: { status: 'ACCEPTED' },
+    });
+  }
+
+  // 친구 요청 거절
+  async rejectFriendRequest(requestId: number, userId: number) {
+    const request = await this.prisma.friendRequest.findUnique({
+      where: { id: requestId },
+    });
+    if (!request) throw new NotFoundException('Request not found');
+    if (request.toId !== userId)
+      throw new ConflictException('Not your request');
+    if (request.status !== 'PENDING')
+      throw new ConflictException('Request is not pending');
+    return await this.prisma.friendRequest.update({
+      where: { id: requestId },
+      data: { status: 'REJECTED' },
+    });
+  }
+
+  // 친구 삭제
+  async removeFriend(userId: number, friendId: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const friend = await this.prisma.user.findUnique({
+      where: { id: friendId },
+    });
+    if (!user || !friend) throw new NotFoundException('User not found');
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { friends: { disconnect: [{ id: friendId }] } },
+    });
+    await this.prisma.user.update({
+      where: { id: friendId },
+      data: { friends: { disconnect: [{ id: userId }] } },
+    });
+    return { success: true };
+  }
+
+  // 친구 목록 조회
+  async getFriends(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { friends: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user.friends;
+  }
+
+  // 친구 요청 목록 조회 (받은 요청)
+  async getReceivedFriendRequests(userId: number) {
+    return await this.prisma.friendRequest.findMany({
+      where: { toId: userId, status: 'PENDING' },
+      include: { from: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  // 친구 요청 목록 조회 (보낸 요청)
+  async getSentFriendRequests(userId: number) {
+    return await this.prisma.friendRequest.findMany({
+      where: { fromId: userId, status: 'PENDING' },
+      include: { to: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async create(user: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: user.email },
