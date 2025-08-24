@@ -63,6 +63,68 @@ export class UserService {
     else return UserService.getBasicUserSelect();
   }
 
+  // 팀 생성
+  /**
+   * 팀 생성 (본인도 팀 멤버에 포함)
+   * @param creatorId 팀 생성자(본인) ID
+   * @param title 팀 이름
+   * @param memberIds 팀 멤버 ID 배열 (본인 제외 가능)
+   */
+  async createTeam(creatorId: number, title: string, memberIds: number[]) {
+    // 중복 제거 및 본인 추가
+    const allMemberIds = Array.from(new Set([creatorId, ...memberIds]));
+    return await this.prisma.team.create({
+      data: {
+        title,
+        members: {
+          connect: allMemberIds.map((id) => ({ id })),
+        },
+      },
+      include: { members: true },
+    });
+  }
+
+  /**
+   * 팀에서 나가기 (leave)
+   * @param userId 나가는 사용자 ID
+   * @param teamId 팀 ID
+   */
+  async leaveTeam(userId: number, teamId: number) {
+    // 팀 존재 확인
+    const team = await this.prisma.team.findUnique({
+      where: { id: teamId },
+      include: { members: true },
+    });
+    if (!team) throw new NotFoundException('Team not found');
+    // 멤버인지 확인
+    if (!team.members.some((m) => m.id === userId)) {
+      throw new ConflictException('User is not a member of this team');
+    }
+    // 멤버에서 제거
+    await this.prisma.team.update({
+      where: { id: teamId },
+      data: {
+        members: {
+          disconnect: [{ id: userId }],
+        },
+      },
+    });
+    return { success: true };
+  }
+
+  // 팀 삭제
+  async deleteTeam(teamId: number) {
+    const team = await this.prisma.team.findUnique({ where: { id: teamId } });
+    if (!team) throw new NotFoundException('Team not found');
+    await this.prisma.team.delete({ where: { id: teamId } });
+    return { success: true };
+  }
+
+  // 팀 목록 조회
+  async listTeams() {
+    return await this.prisma.team.findMany({ include: { members: true } });
+  }
+
   // 친구 요청 보내기
   async sendFriendRequest(fromId: number, toId: number) {
     if (fromId === toId)

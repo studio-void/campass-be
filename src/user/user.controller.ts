@@ -22,11 +22,57 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from '../auth/roles/roles.decorator';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { VerifyUserDto } from './dto/verify-user.dto';
+import { CreateTeamDto } from './dto/create-team.dto';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @ApiOperation({ summary: '팀 생성', description: '새로운 팀을 생성합니다.' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Post('team')
+  async createTeam(
+    @UserId() userId: number,
+    @Body() createTeamDto: CreateTeamDto,
+  ) {
+    return await this.userService.createTeam(
+      userId,
+      createTeamDto.title,
+      createTeamDto.memberIds,
+    );
+  }
+
+  @ApiOperation({
+    summary: '팀 나가기',
+    description: '현재 사용자가 팀에서 나갑니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Post('team/:id/leave')
+  async leaveTeam(@UserId() userId: number, @Param('id') teamId: number) {
+    return await this.userService.leaveTeam(userId, teamId);
+  }
+
+  @ApiOperation({ summary: '팀 삭제', description: '팀을 삭제합니다.' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Delete('team/:id')
+  async deleteTeam(@Param('id') id: number) {
+    return await this.userService.deleteTeam(id);
+  }
+
+  @ApiOperation({
+    summary: '팀 목록 조회',
+    description: '모든 팀 목록을 조회합니다.',
+  })
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Get('team')
+  async listTeams() {
+    return await this.userService.listTeams();
+  }
 
   @ApiOperation({
     summary: '친구 요청 보내기',
